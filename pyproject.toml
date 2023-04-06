@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "dac-yolov8"
+version = "0.1.0"
+description = ""
+authors = ["charitarthchugh <37895518+charitarthchugh@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pylabel = "^0.1.47"
+tqdm = "^4.65.0"
+ultralytics = "^8.0.57"
+torch = ">=1.13.0,<1.14.0"
+torchvision = "^0.14"
+onnx = "^1.13.1"
+onnxruntime = "^1.14.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
