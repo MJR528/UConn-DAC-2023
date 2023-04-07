@@ -11,6 +11,9 @@ packages = [{include = "embedded_inference"}]
 python = "~3.9"
 fastapi = "^0.95.0"
 onnxruntime = "^1.14.1"
+wandb = "^0.14.1"
+uvicorn = "^0.21.1"
+python-multipart = "^0.0.6"
 
 
 
