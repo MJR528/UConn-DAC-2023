@@ -8,9 +8,10 @@ readme = "README.md"
 packages = [{include = "embedded_inference"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "~3.9"
 fastapi = "^0.95.0"
-onnxruntime-gpu = "^1.14.1"
+onnxruntime = "^1.14.1"
+
 
 
 [build-system]
