@@ -1,7 +1,8 @@
-from fastapi import FastAPI, UploadFile
-import wandb
 from pathlib import Path
+
 import onnxruntime
+import wandb
+from fastapi import FastAPI, UploadFile
 
 app = FastAPI()
 
@@ -12,10 +13,10 @@ def yolo_fmt(
     run_name: str,
     img_size: int = 640,
 ):
-    model_file = Path("model.onnx")
-    model_file.write_bytes(model.file.read())
+    # model_file = Path("model.onnx")
+    # model_file.write_bytes(model.file.read())
 
-    session = onnxruntime.InferenceSession(model_file.absolute())
+    session = onnxruntime.InferenceSession(model.file.read())
 
 
 @app.post("/coco")
