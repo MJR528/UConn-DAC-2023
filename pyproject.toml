@@ -5,7 +5,6 @@ description = ""
 authors = ["charitarthchugh <37895518+charitarthchugh@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "embedded_inference"}]
 
 [tool.poetry.dependencies]
 python = "~3.9"
