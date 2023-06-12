@@ -3,11 +3,12 @@ from typing import Optional
 
 import albumentations
 import cv2
+import pandas as pd
+import torch
 from albumentations import BboxParams
 from albumentations.pytorch import ToTensorV2
 from pylabel.dataset import Dataset as pylabel_dataset
 from torch.utils.data import Dataset
-import pandas as pd
 
 
 class DACDataset(Dataset):
@@ -53,7 +54,7 @@ class DACDataset(Dataset):
     def _pascal_voc_to_yolo(self, pascal_voc_lst: list, image_w, image_h):
         x1, x2, y1, y2, cat = pascal_voc_lst
         cat_id = self._category_to_int[cat]
-        return [
+        return [0,
             cat_id,
             ((x2 + x1) / (2 * image_w)),
             ((y2 + y1) / (2 * image_h)),
@@ -91,10 +92,10 @@ class DACDataset(Dataset):
             # bboxes = albumentations.core.bbox_utils.convert_bboxes_from_albumentations(bboxes, "yolo", img.shape[:2],
             #                                                                            check_validity=True)
             # bboxes = np.array(bboxes)
-        return img, [
+        return img, torch.tensor([
             self._pascal_voc_to_yolo(bbox, img.shape[1], img.shape[2])
             for bbox in bboxes
-        ]
+        ])
 
 
 if __name__ == "__main__":

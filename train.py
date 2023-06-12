@@ -79,7 +79,6 @@ class FastestDet:
         pylabel_ds.splitter.GroupShuffleSplit(train_pct=.7, val_pct=.29, test_pct=.01, random_state=42)
         val_dataset = DACDataset(pylabel_ds, split='val')
         train_dataset = DACDataset(pylabel_ds, split='train')
-        # print(val_dataset[0])
         # exit()
         # 验证集
         self.val_dataloader = torch.utils.data.DataLoader(
@@ -87,7 +86,7 @@ class FastestDet:
             batch_size=self.cfg.batch_size,
             shuffle=False,
             collate_fn=collate_fn,
-            num_workers=1,
+            num_workers=4,
             drop_last=False,
             persistent_workers=True,
         )
@@ -97,7 +96,7 @@ class FastestDet:
             batch_size=self.cfg.batch_size,
             shuffle=True,
             collate_fn=collate_fn,
-            num_workers=1,
+            num_workers=4,
             drop_last=True,
             persistent_workers=True,
         )
