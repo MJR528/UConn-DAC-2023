@@ -253,3 +253,5 @@ fabric.properties
 data/
 .idea
 wandb
+weight*.pth
+!weight*_300-epoch.pth
