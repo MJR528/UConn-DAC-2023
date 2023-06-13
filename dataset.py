@@ -28,12 +28,12 @@ class DACDataset(Dataset):
         self.df.reset_index(inplace=True, drop=True)
         if self.split == "train" and transforms is not None:
             self.transforms = [
-                albumentations.Resize(resize_to),
+                albumentations.Resize(*resize_to),
                 *transforms,
                 ToTensorV2(),
             ]
         else:
-            self.transforms = [albumentations.Resize(resize_to), ToTensorV2()]
+            self.transforms = [albumentations.Resize(*resize_to), ToTensorV2()]
         self.T = albumentations.Compose(
             self.transforms, BboxParams(format="pascal_voc")
         )
