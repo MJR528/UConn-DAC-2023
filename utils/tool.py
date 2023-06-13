@@ -26,7 +26,7 @@ class LoadYaml:
 
     def to_dict(self):
         return {
-            # "names": Path(self.names).read_text().splitlines(),
+            # "names": self.names,
             "lr": self.learn_rate,
             "end_epoch": self.end_epoch,
             "input_width": self.input_width,

@@ -113,15 +113,18 @@ class FastestDet:
             self.model, self.optimizer, self.train_dataloader, self.scheduler
         )
         
-        self.cfg.names = train_dataset.category_to_int.keys()
+        self.names = list(train_dataset.category_to_int.keys())
 
     def train(self):
         # 迭代训练
         batch_num = 0
         print("Starting training for %g epochs..." % self.cfg.end_epoch)
+        cfg = self.cfg.to_dict()
+        cfg['names'] = self.names
         run = wandb.init(
-            project="fastestdet", config=self.cfg.to_dict(), save_code=True
+            project="fastestdet", config=cfg, save_code=True
         )
+        
         wandb.watch(self.model, log_freq=100)
         table = wandb.Table(columns=["ID", "Image"])
         
