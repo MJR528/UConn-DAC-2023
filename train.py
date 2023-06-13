@@ -165,7 +165,8 @@ class FastestDet:
                         scale = math.pow(batch_num / warmup_num, 4)
                         g["lr"] = self.cfg.learn_rate * scale
                     lr = g["lr"]
-                # run.log({"train/lr": lr})
+                run.log({"train/lr": lr})
+                
                 # 打印相关训练信息
                 info = "Epoch:%d LR:%f IOU:%f Obj:%f Cls:%f Total:%f" % (
                     epoch,
@@ -184,7 +185,7 @@ class FastestDet:
                 self.model.eval()
                 print("computer mAP...")
                 mAP05 = self.evaluation.compute_map(self.val_dataloader, self.model)
-                # run.log({"test/mAP05": mAP05})
+                run.log({"test/mAP05": mAP05})
                 torch.save(
                     self.model.state_dict(),
                     "models/checkpoint/weight_AP05:%f_%d-epoch.pth" % (mAP05, epoch),
