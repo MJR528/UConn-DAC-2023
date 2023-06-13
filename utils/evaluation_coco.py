@@ -8,12 +8,9 @@ from utils.tool import *
 
 
 class CocoDetectionEvaluator:
-    def __init__(self, names, device):
+    def __init__(self, names: list[str], device: torch.device):
         self.device = device
-        self.classes = []
-        with open(names, "r") as f:
-            for line in f.readlines():
-                self.classes.append(line.strip())
+        self.classes = names
 
     def coco_evaluate(self, gts, preds):
         # Create Ground Truth

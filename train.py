@@ -62,9 +62,6 @@ class FastestDet:
         # 定义损失函数
         self.loss_function = DetectorLoss(device)
 
-        # 定义验证函数
-        self.evaluation = CocoDetectionEvaluator(self.cfg.names, device)
-
         # 数据集加载
         # val_dataset = TensorDataset(
         #     self.cfg.val_txt, self.cfg.input_width, self.cfg.input_height, False
@@ -76,10 +73,17 @@ class FastestDet:
             "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/Annotations",
             "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/JPEGImages",
         )
-        pylabel_ds.splitter.GroupShuffleSplit(train_pct=.7, val_pct=.29, test_pct=.01, random_state=42)
-        val_dataset = DACDataset(pylabel_ds, split='val')
-        train_dataset = DACDataset(pylabel_ds, split='train')
-        # exit()
+        pylabel_ds.splitter.GroupShuffleSplit(
+            train_pct=0.7, val_pct=0.29, test_pct=0.01, random_state=42
+        )
+        val_dataset = DACDataset(pylabel_ds, split="val")
+        train_dataset = DACDataset(pylabel_ds, split="train")
+
+        # 定义验证函数
+        self.evaluation = CocoDetectionEvaluator(
+            train_dataset.category_to_int.keys(), device
+        )
+
         # 验证集
         self.val_dataloader = torch.utils.data.DataLoader(
             val_dataset,

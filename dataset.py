@@ -38,7 +38,7 @@ class DACDataset(Dataset):
         )
 
         self.unique_images = self.df.img_filename.unique()
-        self._category_to_int = {
+        self.category_to_int = {
             "Motor Vehicle": 0,
             "Non-motorized Vehicle": 1,
             "Pedestrian": 2,
@@ -53,8 +53,9 @@ class DACDataset(Dataset):
 
     def _pascal_voc_to_yolo(self, pascal_voc_lst: list, image_w, image_h):
         x1, x2, y1, y2, cat = pascal_voc_lst
-        cat_id = self._category_to_int[cat]
-        return [0,
+        cat_id = self.category_to_int[cat]
+        return [
+            0,
             cat_id,
             ((x2 + x1) / (2 * image_w)),
             ((y2 + y1) / (2 * image_h)),
@@ -92,10 +93,12 @@ class DACDataset(Dataset):
             # bboxes = albumentations.core.bbox_utils.convert_bboxes_from_albumentations(bboxes, "yolo", img.shape[:2],
             #                                                                            check_validity=True)
             # bboxes = np.array(bboxes)
-        return img, torch.tensor([
-            self._pascal_voc_to_yolo(bbox, img.shape[1], img.shape[2])
-            for bbox in bboxes
-        ])
+        return img, torch.tensor(
+            [
+                self._pascal_voc_to_yolo(bbox, img.shape[1], img.shape[2])
+                for bbox in bboxes
+            ]
+        )
 
 
 if __name__ == "__main__":
