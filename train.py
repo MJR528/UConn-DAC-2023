@@ -71,14 +71,22 @@ class FastestDet:
         #     self.cfg.train_txt, self.cfg.input_width, self.cfg.input_height, True
         # )
         pylabel_ds = ImportVOC(
-            "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/Annotations",
-            "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/JPEGImages",
+            self.cfg.annotations_pth,
+            self.cfg.imgs_pth,
         )
         pylabel_ds.splitter.GroupShuffleSplit(
             train_pct=0.7, val_pct=0.29, test_pct=0.01, random_state=42
         )
-        val_dataset = DACDataset(pylabel_ds, split="val", resize_to=(self.cfg.input_height, self.cfg.input_width))
-        train_dataset = DACDataset(pylabel_ds, split="train", resize_to=(self.cfg.input_height, self.cfg.input_width))
+        val_dataset = DACDataset(
+            pylabel_ds,
+            split="val",
+            resize_to=(self.cfg.input_height, self.cfg.input_width),
+        )
+        train_dataset = DACDataset(
+            pylabel_ds,
+            split="train",
+            resize_to=(self.cfg.input_height, self.cfg.input_width),
+        )
         self.names = list(train_dataset.category_to_int.keys())
         # 定义验证函数
         self.evaluation = CocoDetectionEvaluator(self.names, device)

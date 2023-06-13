@@ -1,16 +1,16 @@
 DATASET:
-  TRAIN: "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/fastestdet-all/train.txt"
-  VAL: "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/fastestdet-all/val.txt"
+  ANNOT: "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/Annotations"
+  IMGS: "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/JPEGImages"
   NAMES: "/home/cc/Dev/IdeaProjects/UConn/Ding/dac2023-gpu/data/train/label.txt"
 MODEL:
   NC: 10
-  INPUT_WIDTH: 512
-  INPUT_HEIGHT: 512
+  INPUT_WIDTH: 640
+  INPUT_HEIGHT: 640
 TRAIN:
   LR: 0.001
   THRESH: 0.25
   WARMUP: true
-  BATCH_SIZE: 96
+  BATCH_SIZE: 64
   END_EPOCH: 300
   MILESTIONES:
     - 100

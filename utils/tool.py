@@ -8,9 +8,8 @@ class LoadYaml:
     def __init__(self, path):
         with open(path, encoding="utf8") as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
-        self.val_txt = data["DATASET"]["VAL"]
-        self.train_txt = data["DATASET"]["TRAIN"]
-        self.names = data["DATASET"]["NAMES"]
+        self.annotations_pth = data["DATASET"]["ANNOT"]
+        self.imgs_pth = data["DATASET"]["IMGS"]
 
         self.learn_rate = data["TRAIN"]["LR"]
         self.batch_size = data["TRAIN"]["BATCH_SIZE"]
