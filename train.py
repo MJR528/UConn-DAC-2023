@@ -112,7 +112,8 @@ class FastestDet:
         ) = self.accelerator.prepare(
             self.model, self.optimizer, self.train_dataloader, self.scheduler
         )
-        self.cfg["names"] = train_dataset.category_to_int.keys()
+        
+        self.cfg.names = train_dataset.category_to_int.keys()
 
     def train(self):
         # 迭代训练
@@ -123,6 +124,7 @@ class FastestDet:
         )
         wandb.watch(self.model, log_freq=100)
         table = wandb.Table(columns=["ID", "Image"])
+        
 
         for epoch in range(self.cfg.end_epoch + 1):
             self.model.train()
