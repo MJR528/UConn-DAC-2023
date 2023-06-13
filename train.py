@@ -112,14 +112,17 @@ class FastestDet:
         ) = self.accelerator.prepare(
             self.model, self.optimizer, self.train_dataloader, self.scheduler
         )
+        self.cfg["names"] = train_dataset.category_to_int.keys()
 
     def train(self):
         # 迭代训练
         batch_num = 0
         print("Starting training for %g epochs..." % self.cfg.end_epoch)
-        # run = wandb.init(project="fastestdet", config=self.cfg.to_dict(), save_code=True)
-        # wandb.watch(self.model, log_freq=100)
-        # table = wandb.Table(columns=["ID", "Image"])
+        run = wandb.init(
+            project="fastestdet", config=self.cfg.to_dict(), save_code=True
+        )
+        wandb.watch(self.model, log_freq=100)
+        table = wandb.Table(columns=["ID", "Image"])
 
         for epoch in range(self.cfg.end_epoch + 1):
             self.model.train()
@@ -134,16 +137,16 @@ class FastestDet:
                 # loss计算
                 with self.accelerator.autocast():
                     iou, obj, cls, total = self.loss_function(preds, targets)
-                # run.log(
-                #     {
-                #         "train/epoch": epoch,
-                #         "train/train_loss": total,
-                #         "train/iou": iou,
-                #         "train/obj": cls,
-                #     }
-                # )
+                run.log(
+                    {
+                        "train/epoch": epoch,
+                        "train/train_loss": total,
+                        "train/iou": iou,
+                        "train/obj": cls,
+                    }
+                )
                 # 反向传播求解梯度
-                total.backward()
+                self.accelerator.backward(total)
                 # 更新模型参数
                 self.optimizer.step()
                 self.optimizer.zero_grad()
@@ -205,7 +208,7 @@ class FastestDet:
             #     ],
             #     "class_labels": class_labels
             # }})
-        # run.finish()
+        run.finish()
 
 
 if __name__ == "__main__":

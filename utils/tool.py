@@ -1,14 +1,13 @@
 import torch
 import torchvision
 import yaml
-
+from pathlib import Path
 
 # 解析yaml配置文件
 class LoadYaml:
     def __init__(self, path):
-        with open(path, encoding='utf8') as f:
+        with open(path, encoding="utf8") as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
-
         self.val_txt = data["DATASET"]["VAL"]
         self.train_txt = data["DATASET"]["TRAIN"]
         self.names = data["DATASET"]["NAMES"]
@@ -17,15 +16,27 @@ class LoadYaml:
         self.batch_size = data["TRAIN"]["BATCH_SIZE"]
         self.milestones = data["TRAIN"]["MILESTIONES"]
         self.end_epoch = data["TRAIN"]["END_EPOCH"]
-        
+
         self.input_width = data["MODEL"]["INPUT_WIDTH"]
         self.input_height = data["MODEL"]["INPUT_HEIGHT"]
-        
+
         self.category_num = data["MODEL"]["NC"]
-        
+
         print("Load yaml sucess...")
 
-class EMA():
+    def to_dict(self):
+        return {
+            # "names": Path(self.names).read_text().splitlines(),
+            "lr": self.learn_rate,
+            "end_epoch": self.end_epoch,
+            "input_width": self.input_width,
+            "input_height": self.input_height,
+            "milestones": self.milestones,
+            "batch_size": self.batch_size,
+        }
+
+
+class EMA:
     def __init__(self, model, decay):
         self.model = model
         self.decay = decay
@@ -41,7 +52,9 @@ class EMA():
         for name, param in self.model.named_parameters():
             if param.requires_grad:
                 assert name in self.shadow
-                new_average = (1.0 - self.decay) * param.data + self.decay * self.shadow[name]
+                new_average = (
+                    1.0 - self.decay
+                ) * param.data + self.decay * self.shadow[name]
                 self.shadow[name] = new_average.clone()
 
     def apply_shadow(self):
@@ -58,9 +71,10 @@ class EMA():
                 param.data = self.backup[name]
         self.backup = {}
 
+
 # 后处理(归一化后的坐标)
 def handle_preds(preds, device, conf_thresh=0.25, nms_thresh=0.45):
-    total_bboxes, output_bboxes  = [], []
+    total_bboxes, output_bboxes = [], []
     # 将特征图转换为检测框的坐标
     N, C, H, W = preds.shape
     bboxes = torch.zeros((N, H, W, 6))
@@ -78,7 +92,7 @@ def handle_preds(preds, device, conf_thresh=0.25, nms_thresh=0.45):
 
     # 检测框的坐标
     gy, gx = torch.meshgrid([torch.arange(H), torch.arange(W)])
-    bw, bh = preg[..., 2].sigmoid(), preg[..., 3].sigmoid() 
+    bw, bh = preg[..., 2].sigmoid(), preg[..., 3].sigmoid()
     bcx = (preg[..., 0].tanh() + gx.to(device)) / W
     bcy = (preg[..., 1].tanh() + gy.to(device)) / H
 
@@ -88,9 +102,9 @@ def handle_preds(preds, device, conf_thresh=0.25, nms_thresh=0.45):
 
     bboxes[..., 0], bboxes[..., 1] = x1, y1
     bboxes[..., 2], bboxes[..., 3] = x2, y2
-    bboxes = bboxes.reshape(N, H*W, 6)
+    bboxes = bboxes.reshape(N, H * W, 6)
     total_bboxes.append(bboxes)
-        
+
     batch_bboxes = torch.cat(total_bboxes, 1)
 
     # 对检测框进行NMS处理
@@ -118,4 +132,4 @@ def handle_preds(preds, device, conf_thresh=0.25, nms_thresh=0.45):
             for i in keep:
                 output.append(temp[i])
         output_bboxes.append(torch.Tensor(output))
-    return output_bboxes 
+    return output_bboxes
