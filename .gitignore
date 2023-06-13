@@ -252,3 +252,4 @@ fabric.properties
 
 data/
 .idea
+wandb
