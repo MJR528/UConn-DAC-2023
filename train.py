@@ -182,7 +182,7 @@ class FastestDet:
                 # run.log({"test/mAP05": mAP05})
                 torch.save(
                     self.model.state_dict(),
-                    "checkpoint/weight_AP05:%f_%d-epoch.pth" % (mAP05, epoch),
+                    "models/checkpoint/weight_AP05:%f_%d-epoch.pth" % (mAP05, epoch),
                 )
 
             # 学习率调整
