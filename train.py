@@ -1,6 +1,7 @@
 import argparse
 import math
 import os
+from pandas.io.sql import re
 
 import torch
 import wandb
@@ -76,13 +77,11 @@ class FastestDet:
         pylabel_ds.splitter.GroupShuffleSplit(
             train_pct=0.7, val_pct=0.29, test_pct=0.01, random_state=42
         )
-        val_dataset = DACDataset(pylabel_ds, split="val")
-        train_dataset = DACDataset(pylabel_ds, split="train")
-
+        val_dataset = DACDataset(pylabel_ds, split="val", resize_to=(self.cfg.input_height, self.cfg.input_width))
+        train_dataset = DACDataset(pylabel_ds, split="train", resize_to=(self.cfg.input_height, self.cfg.input_width))
+        self.names = list(train_dataset.category_to_int.keys())
         # 定义验证函数
-        self.evaluation = CocoDetectionEvaluator(
-            train_dataset.category_to_int.keys(), device
-        )
+        self.evaluation = CocoDetectionEvaluator(self.names, device)
 
         # 验证集
         self.val_dataloader = torch.utils.data.DataLoader(
@@ -112,22 +111,17 @@ class FastestDet:
         ) = self.accelerator.prepare(
             self.model, self.optimizer, self.train_dataloader, self.scheduler
         )
-        
-        self.names = list(train_dataset.category_to_int.keys())
 
     def train(self):
         # 迭代训练
         batch_num = 0
         print("Starting training for %g epochs..." % self.cfg.end_epoch)
         cfg = self.cfg.to_dict()
-        cfg['names'] = self.names
-        run = wandb.init(
-            project="fastestdet", config=cfg, save_code=True
-        )
-        
+        cfg["names"] = self.names
+        run = wandb.init(project="fastestdet", config=cfg, save_code=True)
+
         wandb.watch(self.model, log_freq=100)
         table = wandb.Table(columns=["ID", "Image"])
-        
 
         for epoch in range(self.cfg.end_epoch + 1):
             self.model.train()

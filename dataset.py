@@ -15,6 +15,7 @@ class DACDataset(Dataset):
     def __init__(
         self,
         pylabel_ds: pylabel_dataset,
+        resize_to: tuple[int, int] = (512,512),
         split: str = "train",
         transforms: Optional[list] = None,
     ):
@@ -27,12 +28,12 @@ class DACDataset(Dataset):
         self.df.reset_index(inplace=True, drop=True)
         if self.split == "train" and transforms is not None:
             self.transforms = [
-                albumentations.Resize(512, 512),
+                albumentations.Resize(resize_to),
                 *transforms,
                 ToTensorV2(),
             ]
         else:
-            self.transforms = [albumentations.Resize(512, 512), ToTensorV2()]
+            self.transforms = [albumentations.Resize(resize_to), ToTensorV2()]
         self.T = albumentations.Compose(
             self.transforms, BboxParams(format="pascal_voc")
         )
