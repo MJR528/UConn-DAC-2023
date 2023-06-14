@@ -10,7 +10,7 @@ from pylabel.dataset import Dataset as pylabel_dataset
 from torch.utils.data import Dataset
 import numpy as npa
 
-class DACDataset(Dataset):q
+class DACDataset(Dataset):
     def __init__(
         self,
         pylabel_ds: pylabel_dataset,
